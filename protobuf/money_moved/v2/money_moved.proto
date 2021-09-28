@@ -1,0 +1,47 @@
+syntax = "proto3";
+
+package money_moved.v2;
+
+option java_package = "com.picpay.data.v2";
+option go_package = "./moneymovedpbv2";
+
+enum PayeeType {
+  PAYEE_TYPE_UNSPECIFIED = 0;
+  PAYEE_TYPE_SELLER = 1;
+  PAYEE_TYPE_CONSUMER = 2;
+}
+
+message MoneyMoved {
+  int64 amount = 1;
+  int32 payee_id = 2;
+  PayeeType payee_type = 3;
+  string transaction_type = 4;
+  int32 transaction_id = 5;
+  bool is_mgm_transaction = 6;
+  bool is_picpay_card = 7;
+  int32 payment_method = 8;
+  int32 status = 9;
+  bool is_first_transaction = 10;
+  int32 external_id = 11;
+}
+
+message StreamMoneyMovedEventRequest {
+  MoneyMoved money_moved = 1;
+}
+
+message StreamMoneyMovedEventResponse {
+  string id = 1;
+}
+
+message MoneyMovedEventClientStreamRequest {
+  MoneyMoved money_moved = 1;
+}
+
+message MoneyMovedEventClientStreamResponse {
+  repeated string id = 1;  
+}
+
+service MoneyMovedService{
+  rpc StreamMoneyMovedEvent (stream StreamMoneyMovedEventRequest) returns (stream StreamMoneyMovedEventResponse);
+  rpc MoneyMovedEventClientStream (stream MoneyMovedEventClientStreamRequest) returns (MoneyMovedEventClientStreamResponse);
+}
